@@ -8,7 +8,8 @@ router.post(
     EmployeeController.create
 );
 
-router.post('/sign/:site_id', (req, res) => EmployeeController.sign(req, res));
+router.post('/signIn/:site_token', (req, res) => EmployeeController.signInRoute(req, res));
+router.post('/signOut/:site_token', (req, res) => EmployeeController.signOutRoute(req, res));
 
 router.get('/', EmployeeController.getData);
 router.put(

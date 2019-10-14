@@ -1,7 +1,7 @@
-const CRUD = require('../helpers/crud')
-const Emp = require('../models/employee.model')
-const ObjectID = require('mongoose').Types.ObjectId
 const moment = require('moment')
+const CRUD = require('../helpers/crud')
+const { decode } = require('../helpers/jwt')
+const Emp = require('../models/employee.model')
 //
 const AttendanceController = require('./attendance.controller')
 const SiteController = require('./site.controller')
@@ -27,15 +27,55 @@ class EmployeeController {
             })
     }
 
-    static async sign(req, res) {
+    static async signInRoute(req, res) {
         // empID should be extracted from the AUTH token provided by the client-side
-        const { site_id } = req.params
+        const { site_token } = req.params
+        const isObjectID = /^[0-9a-fA-F]{24}$/
+        const site = decode(site_token);
+        // if not a valid object id
+        if (!isObjectID.test(site._id)) return res.status(400).send()
+
+        const site_id = site._id;
         //! for testing
         req.body = { empID: '5d99b512cd08403c9446cf92', ...req.body }
         const { time, empID } = req.body
 
         try {
-            const response = await CRUD.getOne(Emp, true, { _id: empID }) // autopopulate on
+            const response = await CRUD.getOne(Emp, '', { _id: empID }) // autopopulate on
+            // if the employee was not found
+            if (!response) return res.status(403).send(response)
+
+            const currentSession = await this.getCurrentSession(site_id, empID);
+
+            if (!!currentSession) {
+                console.log('Already Signed In', currentSession)
+                return res.status(200).send({ message: 'Already Signed In', employee: currentSession.empFK, siteDetails: site })
+            } else {
+                console.log('Should Sign in')
+                const { status, message } = await this.signIn(site_id, req.body)
+                return res.status(status).send({ message, employee: response.data, siteDetails: site })
+            }
+        }
+        catch (e) {
+            console.log('error: ', e)
+        }
+    }
+
+    static async signOutRoute(req, res) {
+        // empID should be extracted from the AUTH token provided by the client-side
+        const { site_token } = req.params
+        const isObjectID = /^[0-9a-fA-F]{24}$/
+        const site = decode(site_token);
+        // if not a valid object id
+        if (!isObjectID.test(site._id)) return res.status(400).send()
+
+        const site_id = site._id;
+        //! for testing
+        req.body = { empID: '5d99b512cd08403c9446cf92', ...req.body }
+        const { time, empID } = req.body
+
+        try {
+            const response = await CRUD.getOne(Emp, '', { _id: empID }) // autopopulate on
             // if the employee was not found
             if (!response) return res.status(403).send(response)
 
@@ -45,10 +85,8 @@ class EmployeeController {
                 console.log('Should Sign out..')
                 const { status, message, data } = await this.signOut(currentSession, time)
                 return res.status(status).send({ message })
-            } else {
-                console.log('Should Sign in')
-                const { status, message } = await this.signIn(site_id, req.body)
-                return res.status(status).send({ message, employee: response.data })
+            }else {
+                return res.status(status).send({ message: 'no session found' })
             }
         }
         catch (e) {

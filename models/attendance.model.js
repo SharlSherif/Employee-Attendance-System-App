@@ -6,11 +6,13 @@ const moment = require('moment')
 const attendance = mongoose.Schema({
     empFK: {
         type: ObjectID,
-        required: true
+        required: true,
+        ref: 'employee'
     },
     siteFK: {
         type: ObjectID,
-        required: true
+        required: true,
+        ref: 'site'
     },
     signedIn: {// date with hour when employee signed in
         type: String,
@@ -35,7 +37,7 @@ const attendance = mongoose.Schema({
 attendance.pre('save', function (next) {
     console.log(this._doc)
     this._doc.signedIn = moment(Number(this._doc.signedIn)).format('DD-MM-YYYY hh:mm:ss A');
- 
+
     next();
 });
 

@@ -4,7 +4,7 @@ const AttendanceController = require('../controllers/attendance.controller');
 const router = Router();
 
 router.get('/', AttendanceController.getData);
-router.get('/:site_id', AttendanceController.getEmpAttendance);
+router.get('/:site_token', AttendanceController.getEmpAttendance);
 
 router.put(
     '/:id',

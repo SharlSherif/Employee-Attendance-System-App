@@ -50,7 +50,7 @@ class CRUD {
         })
     }
 
-    static getOne(schema, autopopulate = false, where = {}, display = {}) {
+    static getOne(schema, populate = '', where = {}, display = {}) {
         return new Promise((resolve, reject) => {
             // condition of find
             where = {
@@ -65,9 +65,8 @@ class CRUD {
             }
 
             schema
-                .findOne(where, _display, {
-                    autopopulate
-                })
+                .findOne(where, _display)
+                .populate(populate)
                 .then(data => {
                     resolve(
                         responseObject(
