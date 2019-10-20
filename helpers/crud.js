@@ -1,6 +1,4 @@
-
-    const responseObject = (isSuccess, data = undefined, message) => ({ success: isSuccess, data, message })
-
+const responseObject = require('./responseObject')
 class CRUD {
     // Create
     static create(body, schema) {
@@ -9,9 +7,11 @@ class CRUD {
             _schema
                 .save()
                 .then((data) => {
+                    console.log(data)
                     resolve(responseObject(true, data, true, 'Added Successfully'))
                 })
                 .catch(error => {
+                    console.log(error)
                     reject(responseObject(false, null, error))
                 })
         })
@@ -68,13 +68,23 @@ class CRUD {
                 .findOne(where, _display)
                 .populate(populate)
                 .then(data => {
-                    resolve(
-                        responseObject(
-                            true,
-                            data,
-                            'Fetched Successfully'
+                    if (data == null) {
+                        resolve(
+                            responseObject(
+                                false,
+                                data,
+                                'Not Found'
+                            )
                         )
-                    )
+                    } else {
+                        resolve(
+                            responseObject(
+                                true,
+                                data,
+                                'Fetched Successfully'
+                            )
+                        )
+                    }
                 })
                 .catch(error => {
                     reject(responseObject(false, null, error))
@@ -130,5 +140,4 @@ const active = {
         }
     ]
 }
-
 module.exports = CRUD

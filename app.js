@@ -7,9 +7,11 @@ require('dotenv').config()
 // establish db connection
 require('./database')
 // routes
+const AuthRoute = require('./routes/auth.route')
 const EmployeeRoute = require('./routes/employee.route')
 const SiteRoute = require('./routes/site.route')
 const AttendanceRoute = require('./routes/attendance.route')
+const CompanyRoute = require('./routes/company.route')
 
 // auth
 // const passport = require('passport')
@@ -41,8 +43,10 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/api/auth', AuthRoute)
 app.use('/api/employee', EmployeeRoute)
 app.use('/api/site', SiteRoute)
 app.use('/api/attendance', AttendanceRoute)
+app.use('/api/company', CompanyRoute)
 
 app.listen(4000, () => console.log('EAS up on 4000..'))

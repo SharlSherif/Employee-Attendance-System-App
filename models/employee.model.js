@@ -1,7 +1,8 @@
 
 const mongoose = require('mongoose');
-const ObjectID = mongoose.Schema.Types.ObjectId
 const moment = require('moment')
+const ObjectID = mongoose.Schema.Types.ObjectId
+const uuidv1 = require('uuid/v1');
 
 const employee = mongoose.Schema({
     name: {
@@ -14,6 +15,19 @@ const employee = mongoose.Schema({
     jobTitle: {
         type: String,
         required: true
+    },
+    companyID: {
+        type: ObjectID,
+        required: true,
+        ref: 'company'
+    },
+    employeeNumber: {
+        type: String,
+        unique: true,
+        default: function () {
+            let code = uuidv1().split('-')[0]
+            return code.toLowerCase()
+        }
     },
     contract: {
         type: {
@@ -62,7 +76,6 @@ const employee = mongoose.Schema({
         type: String,
         required: true
     },
-    access: [ObjectID], // siteFKs
 
     createdAt: {
         type: String,

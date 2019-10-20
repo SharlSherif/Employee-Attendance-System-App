@@ -49,11 +49,12 @@ class EmployeeController {
 
             if (!!currentSession) {
                 console.log('Already Signed In', currentSession)
-                return res.status(200).send({ message: 'Already Signed In', employee: currentSession.empFK, siteDetails: site })
+                return res.status(200).send({ message: 'Already Signed In', employee: currentSession, siteDetails: site })
             } else {
                 console.log('Should Sign in')
                 const { status, message } = await this.signIn(site_id, req.body)
-                return res.status(status).send({ message, employee: response.data, siteDetails: site })
+                console.log(response)
+                return res.status(status).send({ message, employee: response, siteDetails: site })
             }
         }
         catch (e) {

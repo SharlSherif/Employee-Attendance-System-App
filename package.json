@@ -16,6 +16,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.7.3",
     "morgan": "^1.9.1",
-    "passport": "^0.4.0"
+    "passport": "^0.4.0",
+    "uuid": "^3.3.3"
   }
 }
