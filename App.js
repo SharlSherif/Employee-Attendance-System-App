@@ -42,7 +42,7 @@ export default function App(props) {
           barStyle="dark-content"
         />
         <NavigationContainer >
-          <Drawer.Navigator initialRouteName="HistoryDetails" drawerContent={props => <DrawerCustom />}>
+          <Drawer.Navigator initialRouteName="Auth" drawerContent={props => <DrawerCustom />}>
             {/* <Drawer.Screen name="login" component={TimerScreen} /> */}
             <Drawer.Screen name="Balancer" component={AuthLoadingScreen} />
             <Drawer.Screen name="AttendanceHistory" >
